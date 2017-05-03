@@ -14,22 +14,23 @@ Map::Map()
 {
   for(int i=0;i<999999;i++)
   {
-    array.push_back(new vector< pair<string,int>* >);
+    array.push_back(new list< pair<string,int>* >);
   }
 }
 
 void Map::put(string key, int value)
 {
-  vector< pair<string, int>* > * v =  array[hash(key)];
+  list< pair<string, int>* > * v =  array[hash(key)];
   v->push_back(new pair<string, int>(key, value));
 }
 
 int Map::get(string key)
 {
-  vector< pair<string, int>* > * v =  array[hash(key)];
-  for(int i=0; i< (int)v->size(); i++)
+  list< pair<string, int>* > * v =  array[hash(key)];
+
+  for(list< pair<string, int>* >::iterator it = v->begin(); it != v->end(); it++)
   {
-    pair<string, int>* current_pair = (*v)[i];
+    pair<string, int>* current_pair = *it;
     if(current_pair->first == key)
       return current_pair->second;
   }
@@ -39,9 +40,27 @@ int Map::get(string key)
 
 bool Map::exists(string key)
 {
+  list< pair<string,int>* >* v = array[hash(key)];
+
+  for(list< pair<string, int>* >::iterator it = v->begin(); it != v->end(); it++)
+  {
+    if((*it)->first == key) return true;
+  }
+
   return false;
 }
 
 void Map::remove(string key)
 {
+  list< pair<string, int>* >* v = array[hash(key)];
+
+  for(list< pair<string, int>* >::iterator it = v->begin(); it != v->end(); it++)
+  {
+    pair<string, int>* element = *it;
+    if(element->first == key)
+    {
+      v->erase(it);
+      return;
+    }
+  }
 }
